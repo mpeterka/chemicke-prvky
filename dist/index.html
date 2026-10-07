@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#EDF4F8">
+  <meta name="description" content="Nauč se české a latinské názvy chemických prvků i jejich značky. Dotykový kvíz, psaní odpovědí a přehledné kartičky.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Prvky">
+  <title>Prvky — chemie po jednom prvku</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="preload" href="./faces/happy.png" as="image">
+  <link rel="preload" href="./faces/frowning.png" as="image">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Přejít k obsahu</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Prvky — úvod"><span class="brand-cell" aria-hidden="true">P<span>15</span></span><span>prvky<span class="brand-sub">Malá laboratoř paměti</span></span></a>
+    <nav aria-label="Hlavní navigace"><button type="button" data-action="quiz" class="nav-button" aria-current="page">Kvíz</button><button type="button" data-action="catalog" class="nav-button">Přehled prvků</button></nav>
+  </header>
+  <main id="main"><p class="loading">Připravuji prvky…</p></main>
+  <noscript><p class="notice">Pro spuštění kvízu zapni JavaScript v nastavení prohlížeče.</p></noscript>
+  <p id="storage-notice" class="notice" hidden role="status">Prohlížeč nepovoluje ukládání pokroku. Kvíz můžeš hrát, výsledky se zachovají jen do zavření stránky.</p>
+  <footer class="site-footer"><span>Český název. Latinský název. Značka.</span><button type="button" data-action="about">Rozsah a zdroje</button></footer>
+  <dialog id="about-dialog" aria-labelledby="about-title">
+    <h2 id="about-title">Co se tady učíš</h2>
+    <p>73 prvků s protonovými čísly 1–56 a 72–88. Prozatím vynecháváme lanthanoidy a aktinoidy (obě spodní řady, včetně La a Ac) i supertěžké prvky 104–118.</p>
+    <p>Radioaktivní prvky v hlavní části tabulky zůstávají. Školní sada obsahuje výběr běžných prvků, úplná sada všech 73 zahrnutých prvků.</p>
+    <p>Latinské názvy vycházejí z <a href="https://www.ped.muni.cz/wchem/sm/hc/so/soubory/pojmy/prvky.pdf" target="_blank" rel="noopener">materiálů Masarykovy univerzity</a>. Volný text přijímá také doložené varianty názvů, například molybdenum / molybdaenum a wolframium / wolframum. Přehled uvádí přijímané varianty.</p>
+    <p>Pokrok se ukládá na tomto zařízení. Ve volném textu nevadí chybějící diakritika; u značek záleží na velkých a malých písmenech.</p>
+    <form method="dialog"><button class="primary" autofocus>Zavřít</button></form>
+  </dialog>
+</body>
+</html>
