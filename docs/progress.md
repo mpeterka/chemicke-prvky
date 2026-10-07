@@ -13,3 +13,4 @@
 - Final browser QA: Chromium and WebKit, touch-enabled 768×1024, 1024×768, 390×844; complete 10-question mixed rounds, exact 9/10 expected score, mistake-only retry, searchable catalog, reload progress, dialog, blocked storage and loaded emotion portraits all pass.
 - Final Node suite: 9 tests, 0 failures. Browser assets pass syntax checks. Local preview is running at http://127.0.0.1:4175/ and has been requested in the Codex browser panel.
 - Task 3: review complete; public repository and deployment deferred for user's local review. Resume from this state after feedback.
+- Local review approved: user said “ok, pokračuj”. Resume creation of public mpeterka/chemicke-prvky and GitHub Pages deployment of the reviewed version.

@@ -1,6 +1,8 @@
 # Prvky
 
-Lokální verze k vyzkoušení: http://127.0.0.1:4175/. Publikace na GitHub Pages čeká na připomínky uživatele.
+[Spustit aplikaci](https://mpeterka.github.io/chemicke-prvky/) · [Repozitář na GitHubu](https://github.com/mpeterka/chemicke-prvky)
+
+Lokální verze: http://127.0.0.1:4175/ po spuštění `npm run dev`.
 
 Český výukový kvíz: k jednomu údaji doplníš zbylé dva — český název, latinský název a chemickou značku. Deset otázek v kole střídá výběr ze čtyř možností s volným textem. Otázky nemají časový limit. Po kontrole se odhalí celá buňka prvku a obličej z dodané fotografie: veselý při správné odpovědi, zamračený při chybě. Bod získáš za obě správná přiřazení; chybné prvky lze zopakovat samostatně.
 
