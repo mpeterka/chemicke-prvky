@@ -1,9 +1,9 @@
 # Reakce na odpověď
 
 `happy.png`: veselý výraz pro správnou trojici.
-`frowning.png`: zamračený výraz při chybě nebo odpovědi „Nevím“.
+`frowning-crown.png`: fotografie s korunou dodaná uživatelem 2026-10-07, pro chybu nebo odpověď „Nevím“. Původní soubor je zachován beze změn; čtvercové zobrazení portrétu řeší CSS.
 
-Vygenerováno vestavěným imagegen 2026-10-07 na výslovné přání uživatele z jím dodané fotografie. Originální fotografie není součástí repozitáře. Oba PNG zachovávají průhledné pozadí.
+`happy.png` bylo vygenerováno vestavěným imagegen 2026-10-07 na výslovné přání uživatele z dříve dodané fotografie a zachovává průhledné pozadí. Původní generovaná zamračená varianta byla nahrazena novou fotografií.
 
 Použitý prompt (obě varianty):
 

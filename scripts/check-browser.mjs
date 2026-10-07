@@ -99,7 +99,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         assert.equal(Math.round(nextPosition.x), Math.round(checkPosition.x), 'Action should stay horizontally anchored');
         assert.equal(Math.round(nextPosition.y), Math.round(checkPosition.y), 'Action should stay vertically anchored');
         assert.equal(await portrait.count(), 1, 'Feedback should include the photo portrait');
-        assert.match(await portrait.getAttribute('src'), i === 0 ? /frowning\.png$/ : /happy\.png$/);
+        assert.match(await portrait.getAttribute('src'), i === 0 ? /frowning-crown\.png$/ : /happy\.png$/);
         await portrait.evaluate(img => img.decode());
         assert.ok(await portrait.evaluate(img => img.naturalWidth > 0), 'Portrait image must load');
         if (i === 0) await page.screenshot({ path: `.qa/${name}-correction.png`, fullPage: true });
