@@ -30,8 +30,13 @@ function focusHeading() {
   main.querySelector('h1')?.focus({ preventScroll: true });
 }
 
-function memoryAid(e, explain = false, open = false) {
-  return `<div class="cell-hint"><span class="cell-picture" aria-hidden="true">${e.hint.icon}</span><span class="cell-caption">${e.hint.caption}</span>${explain ? `<details class="cell-story" ${open ? 'open' : ''}><summary>Proč tento obrázek?</summary><p class="picture-explanation">${e.hint.explanation} <a href="${e.hint.source}" target="_blank" rel="noopener">Zdroj obrázku</a></p><p class="name-origin"><strong>Původ názvu:</strong> ${e.origin.text} <a href="${e.origin.source}" target="_blank" rel="noopener">Zdroj názvu</a></p></details>` : ''}</div>`;
+function memoryAid(e, interactive = false, open = false) {
+  if (!interactive) return `<span class="cell-picture" aria-hidden="true">${e.hint.icon}</span>`;
+  return `<details class="cell-hint cell-story" ${open ? 'open' : ''}><summary aria-label="Nápověda: obrázek a vysvětlení" title="Zobrazit nápovědu">?</summary><span class="cell-picture" aria-hidden="true">${e.hint.icon}</span><span class="cell-caption">${e.hint.caption}</span><p class="picture-explanation"><strong>Proč tento obrázek?</strong><br>${e.hint.explanation}</p></details>`;
+}
+
+function nameOrigin(e) {
+  return `<p class="name-origin"><strong>Původ názvu:</strong> ${e.origin.text}</p>`;
 }
 
 function cell(e, extraClass = '', record = false) {
@@ -40,7 +45,8 @@ function cell(e, extraClass = '', record = false) {
   return `<article class="element-cell ${extraClass}" data-category="${e.category}">
     <span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span>
     <span class="cell-symbol">${e.symbol}</span><span class="cell-cs">${e.cs}</span><span class="cell-la" lang="la">${e.la}</span>
-    ${memoryAid(e, record || extraClass === 'question-cell', extraClass === 'question-cell')}
+    ${memoryAid(e, record || extraClass === 'question-cell', extraClass === 'question-cell' && round.questions[round.index].hintShown)}
+    ${record || extraClass === 'question-cell' ? nameOrigin(e) : ''}
     ${record && aliases.length ? `<span class="cell-variants">Také: ${aliases.map(escape).join(', ')}</span>` : ''}
     ${record ? `<span class="cell-record">${saved ? `${saved.correct} správně · ${saved.wrong} chybně` : 'Zatím neprocvičeno'}</span>` : ''}</article>`;
 }
@@ -79,7 +85,7 @@ function renderQuestion() {
   const e = q.element;
   const checked = !!q.result;
   const missingLabels = q.fields.map(field => labels[field].toLocaleLowerCase('cs')).join(' a ');
-  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span><span class="hidden-fields">${missingLabels}<br>?</span>${memoryAid(e)}</article>`;
+  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span><span class="hidden-fields">${missingLabels}<br>?</span>${memoryAid(e, true, q.hintShown)}</article>`;
   const answerGroups = q.fields.map(field => {
     const status = checked ? (q.result.matches[field] ? 'is-right' : 'is-wrong') : '';
     const content = q.mode === 'choice' ? `<div class="option-list">${q.options[field].map(value => {
@@ -141,6 +147,8 @@ function filterCatalog() {
 }
 
 document.addEventListener('click', event => {
+  const hint = event.target.closest('.question-cell .cell-hint summary');
+  if (hint) round.questions[round.index].hintShown = !hint.parentElement.open;
   const option = event.target.closest('[data-field]');
   if (option && !round.questions[round.index].result) {
     const field = option.dataset.field;
