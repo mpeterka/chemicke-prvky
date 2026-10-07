@@ -49,7 +49,7 @@ function cell(e, extraClass = '', record = false) {
   const aliases = Object.values(e.aliases).flat();
   return `<article class="element-cell ${extraClass}" data-category="${e.category}">
     <span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span>
-    <span class="cell-symbol">${e.symbol}</span><span class="cell-cs">${e.cs}</span><span class="cell-la" lang="la">${e.la}</span>
+    <span class="cell-symbol" data-card-field="symbol">${e.symbol}</span><span class="cell-la" data-card-field="la" lang="la">${e.la}</span><span class="cell-cs" data-card-field="cs">${e.cs}</span>
     ${memoryAid(e, record || extraClass === 'question-cell', extraClass === 'question-cell' && round.questions[round.index].hintShown)}
     ${record || extraClass === 'question-cell' ? nameOrigin(e) : ''}
     ${record && aliases.length ? `<span class="cell-variants">Také: ${aliases.map(escape).join(', ')}</span>` : ''}
@@ -84,7 +84,9 @@ function startRound(pool) {
 }
 
 function answerSlots(q) {
-  return `<div class="card-answers">${q.fields.map(field => `<div class="card-answer" data-answer-slot="${field}"><span class="card-answer-label">${labels[field]}</span><span class="card-answer-value" ${field === 'la' ? 'lang="la"' : ''}></span></div>`).join('')}</div>`;
+  return `<div class="card-answers">${['symbol', 'la', 'cs'].map(field => field === q.prompt
+    ? `<div class="card-given" data-card-field="${field}"><span class="cell-field-label">Zadání · ${labels[field]}</span><span class="${field === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${field === 'la' ? 'lang="la"' : ''}>${q.element[field]}</span></div>`
+    : `<div class="card-answer" data-card-field="${field}" data-answer-slot="${field}"><span class="card-answer-label">${labels[field]}</span><span class="card-answer-value" ${field === 'la' ? 'lang="la"' : ''}></span></div>`).join('')}</div>`;
 }
 
 function updateCardAnswers() {
@@ -111,7 +113,7 @@ function renderQuestion() {
   if (!q) return renderResult();
   const e = q.element;
   const checked = !!q.result;
-  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">Zadání · ${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span>${answerSlots(q)}${memoryAid(e, true, q.hintShown)}</article>`;
+  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span>${answerSlots(q)}${memoryAid(e, true, q.hintShown)}</article>`;
   const answerGroups = checked ? '' : q.fields.map(field => {
     const content = q.mode === 'choice' ? `<div class="option-list">${q.options[field].map(value => {
       const selected = answers[field] === value;

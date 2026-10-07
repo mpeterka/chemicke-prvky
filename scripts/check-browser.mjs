@@ -46,6 +46,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         assert.equal(await page.locator('.question-cell .picture-explanation').isVisible(), false);
         assert.equal(await page.locator('.question-cell .name-origin').count(), 0);
         assert.equal(await page.locator('.card-answer').count(), 2);
+        assert.deepEqual(await page.locator('.question-cell [data-card-field]').evaluateAll(nodes => nodes.map(node => node.dataset.cardField)), ['symbol', 'la', 'cs']);
         assert.equal(await page.locator('.card-answer.is-filled').count(), 0, 'Next question should reset inserted answers');
         if (i === 1) {
           await page.locator('.question-cell summary').tap();
@@ -84,6 +85,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
           await page.getByRole('button', { name: 'Zkontrolovat', exact: true }).tap();
         }
         await page.locator('.feedback').waitFor();
+        assert.deepEqual(await page.locator('.question-cell [data-card-field]').evaluateAll(nodes => nodes.map(node => node.dataset.cardField)), ['symbol', 'la', 'cs']);
         assert.equal(await page.locator('.question-cell .cell-picture').isVisible(), i === 1, 'Checking should preserve the requested hint state');
         assert.ok(await page.locator('.question-cell .name-origin').isVisible());
         assert.ok((await page.locator('.question-cell .name-origin').innerText()).includes(e.origin.text));
