@@ -82,14 +82,35 @@ function startRound(pool) {
   focusHeading();
 }
 
+function answerSlots(q) {
+  return `<div class="card-answers">${q.fields.map(field => `<div class="card-answer" data-answer-slot="${field}"><span class="card-answer-label">${labels[field]}</span><span class="card-answer-value" ${field === 'la' ? 'lang="la"' : ''}></span></div>`).join('')}</div>`;
+}
+
+function updateCardAnswers() {
+  const q = round?.questions[round.index];
+  if (!q || q.result) return;
+  for (const slot of main.querySelectorAll('[data-answer-slot]')) {
+    const field = slot.dataset.answerSlot;
+    const value = String(answers[field] || '').trim();
+    const output = slot.querySelector('.card-answer-value');
+    const changed = output.textContent !== (value || '…');
+    slot.classList.toggle('is-filled', !!value);
+    slot.querySelector('.card-answer-label').textContent = value ? 'Tvoje odpověď' : labels[field];
+    output.textContent = value || '…';
+    if (changed && value && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      output.getAnimations().forEach(animation => animation.cancel());
+      output.animate([{ opacity: .35, transform: 'translateY(-8px) scale(.96)' }, { opacity: 1, transform: 'translateY(0) scale(1)' }], { duration: 220, easing: 'ease-out' });
+    }
+  }
+}
+
 function renderQuestion() {
   setView('quiz');
   const q = round.questions[round.index];
   if (!q) return renderResult();
   const e = q.element;
   const checked = !!q.result;
-  const missingLabels = q.fields.map(field => labels[field].toLocaleLowerCase('cs')).join(' a ');
-  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span><span class="hidden-fields">${missingLabels}<br>?</span>${memoryAid(e, true, q.hintShown)}</article>`;
+  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">Zadání · ${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span>${answerSlots(q)}${memoryAid(e, true, q.hintShown)}</article>`;
   const answerGroups = checked ? '' : q.fields.map(field => {
     const content = q.mode === 'choice' ? `<div class="option-list">${q.options[field].map(value => {
       const selected = answers[field] === value;
@@ -106,6 +127,7 @@ function renderQuestion() {
     <div class="answer-actions">${checked ? `<button type="button" class="primary" data-action="next">${round.index + 1 === round.questions.length ? 'Zobrazit výsledek' : 'Další prvek'}</button>` : '<button type="submit" class="primary" id="check-button" disabled>Zkontrolovat</button><button type="button" class="quiet" data-action="skip">Nevím</button>'}</div></form></div>
     <div class="round-meta"><span>Správné trojice: <strong>${round.score}</strong> · ${scope === 'all' ? 'Celá sada' : 'Školní základ'}</span><button class="quiet" data-action="home">Nový výběr</button></div>`;
   updateCheckButton();
+  updateCardAnswers();
 }
 
 function updateCheckButton() {
@@ -161,6 +183,7 @@ document.addEventListener('click', event => {
       button.querySelector('.mark').textContent = selected ? '●' : '';
     }
     updateCheckButton();
+    updateCardAnswers();
     return;
   }
   const action = event.target.closest('[data-action]')?.dataset.action;
@@ -176,7 +199,7 @@ document.addEventListener('click', event => {
 });
 
 main.addEventListener('input', event => {
-  if (event.target.matches('.text-answer')) { answers[event.target.name] = event.target.value; updateCheckButton(); }
+  if (event.target.matches('.text-answer')) { answers[event.target.name] = event.target.value; updateCheckButton(); updateCardAnswers(); }
   if (event.target.id === 'search') { catalogQuery = event.target.value; filterCatalog(); }
 });
 main.addEventListener('change', event => {

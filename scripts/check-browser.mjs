@@ -44,6 +44,8 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         assert.equal(await page.locator('.question-cell .cell-picture').isVisible(), false, 'Picture should be hidden until hint is requested');
         assert.equal(await page.locator('.question-cell .picture-explanation').isVisible(), false);
         assert.equal(await page.locator('.question-cell .name-origin').count(), 0);
+        assert.equal(await page.locator('.card-answer').count(), 2);
+        assert.equal(await page.locator('.card-answer.is-filled').count(), 0, 'Next question should reset inserted answers');
         if (i === 1) {
           await page.locator('.question-cell summary').tap();
           assert.ok(await page.locator('.question-cell .cell-picture').isVisible());
@@ -65,6 +67,8 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
             const field = await input.getAttribute('name');
             const answer = field === 'symbol' ? e[field] : e[field].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
             await input.fill(` ${answer} `);
+            assert.equal(await page.locator(`[data-answer-slot="${field}"] .card-answer-value`).innerText(), answer);
+            assert.equal(await page.locator(`[data-answer-slot="${field}"] .card-answer-label`).innerText(), 'Tvoje odpověď');
           }
           if (i === 1) await page.screenshot({ path: `.qa/${name}-text.png`, fullPage: true });
           await page.getByRole('button', { name: 'Zkontrolovat', exact: true }).tap();
@@ -73,6 +77,8 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
             const label = await fieldset.locator('legend').innerText();
             const field = label === 'Český název' ? 'cs' : label === 'Latinský název' ? 'la' : 'symbol';
             await fieldset.getByRole('button', { name: e[field], exact: true }).tap();
+            assert.equal(await page.locator(`[data-answer-slot="${field}"] .card-answer-value`).innerText(), e[field]);
+            assert.equal(await page.locator(`[data-answer-slot="${field}"] .card-answer-label`).innerText(), 'Tvoje odpověď');
           }
           await page.getByRole('button', { name: 'Zkontrolovat', exact: true }).tap();
         }
