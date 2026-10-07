@@ -82,7 +82,11 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         assert.ok((await page.locator('.question-cell .name-origin').innerText()).includes(e.origin.text));
         assert.equal(await page.locator('.question-cell a').count(), 0, 'Cards should not show source links');
         await layout(page);
-        assert.equal(await page.locator('.feedback').innerText().then(t => t.includes('Správná trojice!')), i !== 0);
+        assert.equal(await page.locator('.answer-option, .text-answer, fieldset').count(), 0, 'Answer controls should disappear after checking');
+        assert.equal(await page.locator('.feedback').evaluate(el => el.classList.contains('wrong')), i === 0);
+        assert.ok((await page.locator('.feedback h2').innerText()).length > 5);
+        assert.ok(!(await page.locator('.feedback h2').innerText()).includes('Správná trojice'));
+        assert.equal(await page.locator('.feedback .answer-outcome').innerText(), i === 0 ? 'Tentokrát to nevyšlo' : 'Správně');
         const portrait = page.locator('.feedback img');
         assert.equal(await portrait.count(), 1, 'Feedback should include the photo portrait');
         assert.match(await portrait.getAttribute('src'), i === 0 ? /frowning\.png$/ : /happy\.png$/);

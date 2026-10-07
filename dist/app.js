@@ -14,6 +14,10 @@ let answers = {};
 let catalogQuery = '';
 let catalogScope = 'all';
 const school = elements.filter(e => e.common);
+const reactions = {
+  correct: ['Máš to v kapse!', 'Tohle byl čistý flex.', 'GG! Další prvek pokořen.', 'Jedeš bomby!', 'Prvek máš pod palcem.', 'Tohle ti sedlo!'],
+  wrong: ['Další pokus, další šance.', 'Ještě jeden level.', 'V pohodě, jedeme dál.', 'To dáš. Zkus to znovu!', 'I tohle je cesta k výhře.', 'Žádný stres, příště to klapne.'],
+};
 
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -86,21 +90,19 @@ function renderQuestion() {
   const checked = !!q.result;
   const missingLabels = q.fields.map(field => labels[field].toLocaleLowerCase('cs')).join(' a ');
   const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span><span class="hidden-fields">${missingLabels}<br>?</span>${memoryAid(e, true, q.hintShown)}</article>`;
-  const answerGroups = q.fields.map(field => {
-    const status = checked ? (q.result.matches[field] ? 'is-right' : 'is-wrong') : '';
+  const answerGroups = checked ? '' : q.fields.map(field => {
     const content = q.mode === 'choice' ? `<div class="option-list">${q.options[field].map(value => {
       const selected = answers[field] === value;
-      const optionStatus = checked ? (value === e[field] ? 'is-right' : selected ? 'is-wrong' : '') : '';
-      return `<button type="button" class="answer-option ${optionStatus}" data-field="${field}" data-value="${escape(value)}" aria-pressed="${selected}" ${checked ? 'disabled' : ''} ${field === 'la' ? 'lang="la"' : ''}><span>${value}</span><span class="mark" aria-hidden="true">${checked && value === e[field] ? '✓' : checked && selected ? '×' : selected ? '●' : ''}</span></button>`;
-    }).join('')}</div>` : `<input class="text-answer ${status}" id="answer-${field}" name="${field}" aria-labelledby="legend-${field}" aria-describedby="note-${field}${checked ? ' correction-' + field : ''}" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" value="${escape(answers[field] || '')}" ${checked ? 'readonly' : ''} ${field === 'la' ? 'lang="la"' : ''}><p class="input-note" id="note-${field}">${field === 'symbol' ? 'Velká a malá písmena jsou důležitá (např. Cu).' : 'Diakritiku a velká písmena neřešíme.'}</p>`;
-    return `<fieldset><legend id="legend-${field}">${labels[field]}</legend>${content}${checked ? `<p class="field-correction" id="correction-${field}">${q.result.matches[field] ? '✓ Správně' : `× ${answers[field] ? 'Tvoje odpověď: ' + escape(answers[field]) : 'Bez odpovědi'}`}<br>Správně: <strong>${e[field]}</strong></p>` : ''}</fieldset>`;
+      return `<button type="button" class="answer-option" data-field="${field}" data-value="${escape(value)}" aria-pressed="${selected}" ${field === 'la' ? 'lang="la"' : ''}><span>${value}</span><span class="mark" aria-hidden="true">${selected ? '●' : ''}</span></button>`;
+    }).join('')}</div>` : `<input class="text-answer" id="answer-${field}" name="${field}" aria-labelledby="legend-${field}" aria-describedby="note-${field}" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" value="${escape(answers[field] || '')}" ${field === 'la' ? 'lang="la"' : ''}><p class="input-note" id="note-${field}">${field === 'symbol' ? 'Velká a malá písmena jsou důležitá (např. Cu).' : 'Diakritiku a velká písmena neřešíme.'}</p>`;
+    return `<fieldset><legend id="legend-${field}">${labels[field]}</legend>${content}</fieldset>`;
   }).join('');
 
   main.innerHTML = `<div class="question-head"><h1 tabindex="-1">Doplň prvek</h1><span class="question-counter">Otázka ${round.index + 1} z ${round.questions.length}</span></div>
     <div class="progress-track" role="progressbar" aria-label="Postup kolem" aria-valuemin="0" aria-valuemax="${round.questions.length}" aria-valuenow="${round.index + (checked ? 1 : 0)}"><span style="width:${100 * (round.index + (checked ? 1 : 0)) / round.questions.length}%"></span></div>
     <div class="quiz-layout"><aside class="question-aside">${questionCell}<span class="category-tag">${categories[e.category]}</span><p class="question-help">${checked ? 'Teď znáš celou trojici. Chvilku si ji prohlédni.' : 'Jednu část znáš.<br>Doplň zbývající dvě.'}</p></aside>
-    <form id="answer-form" novalidate><span class="mode-tag">${q.mode === 'choice' ? 'Výběr z možností' : 'Zpaměti — napiš odpověď'}</span><h2 class="answer-title">${checked ? 'Tvoje přiřazení' : q.mode === 'choice' ? 'Vyber správnou dvojici' : 'Napiš správnou dvojici'}</h2><div class="answer-groups">${answerGroups}</div>
-    ${checked ? `<div class="feedback ${q.result.correct ? '' : 'wrong'}" role="status"><img class="feedback-face" src="./faces/${q.result.correct ? 'happy' : 'frowning'}.png" alt="" width="96" height="96"><div><h2>${q.result.correct ? 'Správná trojice!' : 'Tohle si ještě zopakujeme.'}</h2><p>${e.cs} — ${e.la} — ${e.symbol}</p></div></div>` : ''}
+    <form id="answer-form" novalidate>${checked ? '' : `<span class="mode-tag">${q.mode === 'choice' ? 'Výběr z možností' : 'Zpaměti — napiš odpověď'}</span><h2 class="answer-title">${q.mode === 'choice' ? 'Vyber správnou dvojici' : 'Napiš správnou dvojici'}</h2><div class="answer-groups">${answerGroups}</div>`}
+    ${checked ? `<div class="feedback ${q.result.correct ? '' : 'wrong'}" role="status"><img class="feedback-face" src="./faces/${q.result.correct ? 'happy' : 'frowning'}.png" alt="" width="220" height="220"><div><span class="answer-outcome">${q.result.correct ? 'Správně' : 'Tentokrát to nevyšlo'}</span><h2>${reactions[q.result.correct ? 'correct' : 'wrong'][round.index % reactions.correct.length]}</h2><p>${e.cs} — ${e.la} — ${e.symbol}</p></div></div>` : ''}
     <div class="answer-actions">${checked ? `<button type="button" class="primary" data-action="next">${round.index + 1 === round.questions.length ? 'Zobrazit výsledek' : 'Další prvek'}</button>` : '<button type="submit" class="primary" id="check-button" disabled>Zkontrolovat</button><button type="button" class="quiet" data-action="skip">Nevím</button>'}</div></form></div>
     <div class="round-meta"><span>Správné trojice: <strong>${round.score}</strong> · ${scope === 'all' ? 'Celá sada' : 'Školní základ'}</span><button class="quiet" data-action="home">Nový výběr</button></div>`;
   updateCheckButton();
