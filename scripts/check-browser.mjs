@@ -37,6 +37,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
       await layout(page);
       await page.screenshot({ path: `.qa/${name}-home.png`, fullPage: true });
       await page.getByRole('button', { name: 'Spustit kvíz', exact: true }).tap();
+      const checkPosition = await page.locator('#check-button').boundingBox();
       for (let i = 0; i < 10; i++) {
         await page.locator('.question-cell').waitFor();
         const e = await questionElement(page);
@@ -94,6 +95,9 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         assert.ok(!(await page.locator('.feedback h2').innerText()).includes('Správná trojice'));
         assert.equal(await page.locator('.feedback .answer-outcome').innerText(), i === 0 ? 'Tentokrát to nevyšlo' : 'Správně');
         const portrait = page.locator('.feedback img');
+        const nextPosition = await page.locator('[data-action="next"]').boundingBox();
+        assert.equal(Math.round(nextPosition.x), Math.round(checkPosition.x), 'Action should stay horizontally anchored');
+        assert.equal(Math.round(nextPosition.y), Math.round(checkPosition.y), 'Action should stay vertically anchored');
         assert.equal(await portrait.count(), 1, 'Feedback should include the photo portrait');
         assert.match(await portrait.getAttribute('src'), i === 0 ? /frowning\.png$/ : /happy\.png$/);
         await portrait.evaluate(img => img.decode());

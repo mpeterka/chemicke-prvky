@@ -23,6 +23,7 @@ const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', 
 
 function setView(next) {
   view = next;
+  document.body.classList.toggle('quiz-active', next === 'quiz');
   for (const button of document.querySelectorAll('.nav-button')) {
     const active = next === 'catalog' ? button.dataset.action === 'catalog' : button.dataset.action === 'quiz';
     if (active) button.setAttribute('aria-current', 'page');
