@@ -37,7 +37,7 @@ function focusHeading() {
 
 function memoryAid(e, interactive = false, open = false) {
   if (!interactive) return `<span class="cell-picture" aria-hidden="true">${e.hint.icon}</span>`;
-  return `<details class="cell-hint cell-story" ${open ? 'open' : ''}><summary aria-label="Nápověda: obrázek a vysvětlení" title="Zobrazit nápovědu">?</summary><span class="cell-picture" aria-hidden="true">${e.hint.icon}</span><span class="cell-caption">${e.hint.caption}</span><p class="picture-explanation"><strong>Proč tento obrázek?</strong><br>${e.hint.explanation}</p></details>`;
+  return `<details class="cell-hint cell-story" ${open ? 'open' : ''}><summary aria-label="Nápověda: obrázek a vysvětlení" title="Otevřít nebo zavřít nápovědu"><span class="hint-question" aria-hidden="true">?</span><span class="cell-picture" aria-hidden="true">${e.hint.icon}</span></summary><span class="cell-caption">${e.hint.caption}</span><p class="picture-explanation"><strong>Proč tento obrázek?</strong><br>${e.hint.explanation}</p></details>`;
 }
 
 function nameOrigin(e) {
@@ -163,7 +163,7 @@ function renderCatalog() {
   setView('catalog');
   main.innerHTML = `<section><div class="catalog-head"><div><h1 tabindex="-1">Prvky pod lupou.</h1><p>Český název, latina a značka pohromadě.</p></div></div>
     <div class="catalog-search"><label>Najdi prvek<input id="search" type="search" value="${escape(catalogQuery)}" placeholder="Třeba měď, cuprum nebo Cu" autocomplete="off" autocorrect="off" spellcheck="false"></label><label>Sada prvků<select id="catalog-scope"><option value="all" ${catalogScope === 'all' ? 'selected' : ''}>Celá sada (73)</option><option value="common" ${catalogScope === 'common' ? 'selected' : ''}>Školní základ (${school.length})</option></select></label></div>
-    <p class="catalog-count" id="catalog-count" role="status"></p><div class="catalog-grid" id="catalog-grid"></div></section>`;
+    <div class="category-legend" aria-label="Barvy podle skupin prvků">${Object.entries(categories).map(([key, label]) => `<span data-category="${key}"><i aria-hidden="true"></i>${label}</span>`).join('')}</div><p class="catalog-count" id="catalog-count" role="status"></p><div class="catalog-grid" id="catalog-grid"></div></section>`;
   filterCatalog();
 }
 

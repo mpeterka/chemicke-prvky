@@ -43,6 +43,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         const e = await questionElement(page);
         assert.equal(await page.locator('.question-cell .cell-picture').count(), 1, 'Question should show a visual mnemonic');
         assert.equal(await page.locator('.question-cell .cell-picture').isVisible(), false, 'Picture should be hidden until hint is requested');
+        assert.ok(await page.locator('.question-cell .hint-question').isVisible());
         assert.equal(await page.locator('.question-cell .picture-explanation').isVisible(), false);
         assert.equal(await page.locator('.question-cell .name-origin').count(), 0);
         assert.equal(await page.locator('.card-answer').count(), 2);
@@ -51,6 +52,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         if (i === 1) {
           await page.locator('.question-cell summary').tap();
           assert.ok(await page.locator('.question-cell .cell-picture').isVisible());
+          assert.equal(await page.locator('.question-cell .hint-question').isVisible(), false);
           assert.ok(await page.locator('.question-cell .picture-explanation').isVisible());
           // Opening the hint must keep any typed answers intact.
           await page.locator('.text-answer').first().fill('rozpracováno');
