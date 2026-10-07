@@ -19,6 +19,8 @@ U názvů se ignorují krajní mezery, velikost písmen a diakritika. U značek 
 
 ## iPad a pokrok
 
+Každý ze 73 prvků má obrázkovou paměťovou pomůcku: nativní emoji/piktogram podle využití, vlastnosti nebo původu názvu. Selen připomíná Měsíc, helium balónek. Kartička má krátký popisek a rozbalovací vysvětlení s konkrétním zdrojem [Royal Society of Chemistry](https://periodic-table.rsc.org/). V kvízu slouží obrázek jako nápověda; úplné vysvětlení se zpřístupní po kontrole odpovědi. Grafika emoji se může mezi zařízeními lišit.
+
 Dotyková tlačítka mají alespoň 48 px. Není nutné přetahování, hover ani instalace aplikace. Stránka zachovává přibližování a funguje na výšku i na šířku. Doporučen Safari na iPadOS 16 nebo novějším. Výsledek se oznamuje textem i barvou a ovládání podporuje klávesnici.
 
 Pokrok se ukládá do localStorage tohoto prohlížeče, bez účtu a bez synchronizace zařízení. Při nedostupném úložišti můžeš dál hrát; rozhraní upozorní, že výsledky vydrží jen během otevřené stránky. Aktivní rozehrané kolo se po obnovení stránky nespustí automaticky; dosavadní kontrolované odpovědi zůstávají uložené.

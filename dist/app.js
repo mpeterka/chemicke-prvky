@@ -30,12 +30,17 @@ function focusHeading() {
   main.querySelector('h1')?.focus({ preventScroll: true });
 }
 
+function memoryAid(e, explain = false) {
+  return `<div class="cell-hint"><span class="cell-picture" aria-hidden="true">${e.hint.icon}</span><span class="cell-caption">${e.hint.caption}</span>${explain ? `<details class="cell-story"><summary>Proč tento obrázek?</summary><p>${e.hint.explanation} <a href="${e.hint.source}" target="_blank" rel="noopener">Zdroj souvislosti</a></p></details>` : ''}</div>`;
+}
+
 function cell(e, extraClass = '', record = false) {
   const saved = progress[e.number];
   const aliases = Object.values(e.aliases).flat();
   return `<article class="element-cell ${extraClass}" data-category="${e.category}">
     <span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span>
     <span class="cell-symbol">${e.symbol}</span><span class="cell-cs">${e.cs}</span><span class="cell-la" lang="la">${e.la}</span>
+    ${memoryAid(e, record || extraClass === 'question-cell')}
     ${record && aliases.length ? `<span class="cell-variants">Také: ${aliases.map(escape).join(', ')}</span>` : ''}
     ${record ? `<span class="cell-record">${saved ? `${saved.correct} správně · ${saved.wrong} chybně` : 'Zatím neprocvičeno'}</span>` : ''}</article>`;
 }
@@ -74,7 +79,7 @@ function renderQuestion() {
   const e = q.element;
   const checked = !!q.result;
   const missingLabels = q.fields.map(field => labels[field].toLocaleLowerCase('cs')).join(' a ');
-  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span><span class="hidden-fields">${missingLabels}<br>?</span></article>`;
+  const questionCell = checked ? cell(e, 'question-cell') : `<article class="element-cell question-cell" data-category="${e.category}"><span class="cell-number" aria-label="Protonové číslo ${e.number}">${e.number}</span><span class="cell-field-label">${labels[q.prompt]}</span><span class="${q.prompt === 'symbol' ? 'cell-symbol' : 'prompt-name'}" ${q.prompt === 'la' ? 'lang="la"' : ''}>${e[q.prompt]}</span><span class="hidden-fields">${missingLabels}<br>?</span>${memoryAid(e)}</article>`;
   const answerGroups = q.fields.map(field => {
     const status = checked ? (q.result.matches[field] ? 'is-right' : 'is-wrong') : '';
     const content = q.mode === 'choice' ? `<div class="option-list">${q.options[field].map(value => {

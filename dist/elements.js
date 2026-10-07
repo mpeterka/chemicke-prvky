@@ -89,9 +89,91 @@ const variants = {
   86: { la: ['radon'] },
 };
 
+// Visual mnemonics: an association with a use, a property, or the name's origin.
+// These are native pictograms, not photographs of pure chemical samples.
+const hintRows = `
+1|💧|Voda|Vodík je spolu s kyslíkem součástí molekul vody.|hydrogen
+2|🎈|Balónky|Lehké a málo reaktivní helium se používá k plnění balónků.|helium
+3|🔋|Baterie|Lithium se používá v dobíjecích bateriích telefonů a elektromobilů.|lithium
+4|⚙️|Letecké součástky|Slitiny s berylliem se využívají v leteckém průmyslu.|beryllium
+5|🧪|Žáruvzdorné sklo|Oxid boritý je součástí borosilikátového skla odolného vůči teplu.|boron
+6|✏️|Tužka|Grafit v tužce je jednou z forem uhlíku.|carbon
+7|🌾|Hnojiva|Sloučeniny dusíku se používají v hnojivech pro růst rostlin.|nitrogen
+8|🫁|Dýchání|Kyslík je nezbytný pro buněčné dýchání člověka.|oxygen
+9|🪥|Zubní pasta|Zubní pasty mohou obsahovat fluoridy, tedy sloučeniny fluoru.|fluorine
+10|💡|Svítící reklamy|Neon ve výbojce svítí červenooranžově a využívá se v reklamách.|neon
+11|🧂|Kuchyňská sůl|Kuchyňská sůl je chlorid sodný, sloučenina sodíku a chloru.|sodium
+12|✨|Bílé světlo|Hořčík při hoření vydává jasné bílé světlo.|magnesium
+13|🥫|Plechovky|Lehký hliník se používá při výrobě nápojových plechovek.|aluminium
+14|💻|Počítačové čipy|Křemík je polovodič používaný v počítačových čipech.|silicon
+15|🔥|Zápalky|Červený fosfor je součástí škrtací plochy bezpečnostních zápalek.|phosphorus
+16|🟡|Žluté krystaly|Běžná forma síry tvoří žluté krystaly nebo prášek.|sulfur
+17|🏊|Bazén|Chlor a jeho sloučeniny se používají k dezinfekci bazénové vody.|chlorine
+18|🧑‍🏭|Svařování|Argon vytváří ochrannou atmosféru při svařování.|argon
+19|🌱|Hnojiva|Sloučeniny draslíku patří mezi důležité složky hnojiv.|potassium
+20|🦴|Kosti|Sloučeniny vápníku jsou důležitou součástí kostí.|calcium
+21|🚲|Lehké rámy kol|Slitiny hliníku a skandia se používají v lehkých rámech kol.|scandium
+22|🦿|Implantáty|Titan dobře spolupracuje s kostí a používá se v implantátech.|titanium
+23|🔧|Ocelové nástroje|Příměs vanadu zvyšuje odolnost oceli používané v nástrojích.|vanadium
+24|🪞|Lesklý povrch|Chromování může dát kovovému povrchu zrcadlový lesk.|chromium
+25|🚆|Kolejnice|Manganová ocel je odolná a využívá se například na kolejnice.|manganese
+26|🧲|Magnety|Železo a některé jeho slitiny či sloučeniny se používají v magnetech.|iron
+27|🔵|Modrý pigment|Sloučeniny kobaltu dávají sklu a keramice výraznou modrou barvu.|cobalt
+28|🪙|Mince|Nikl se používá v mincovních slitinách, často spolu s mědí.|nickel
+29|🔌|Elektrické vodiče|Měď dobře vede elektřinu a používá se v kabelech.|copper
+30|🛡️|Ochrana proti korozi|Zinkování chrání ocel před korozí.|zinc
+31|🐓|Kohout|Gallium připomíná latinské gallus, kohout; název souvisí také s Francií.|gallium
+32|📷|Optické čočky|Oxid germania se používá v některých optických čočkách.|germanium
+33|💻|Polovodiče|Arsenid gallitý je sloučenina arsenu využívaná v polovodičích.|arsenic
+34|🌙|Měsíc|Název selenu odkazuje na Seléné, řeckou bohyni Měsíce.|selenium
+35|🎞️|Fotografický film|Bromid stříbrný se používá ve fotografickém filmu.|bromine
+36|📸|Fotografický blesk|Krypton se používá v některých výbojkách pro rychlé fotografování.|krypton
+37|👁️|Světelná čidla|Rubidium bylo využíváno ve fotobuňkách, které reagují na světlo.|rubidium
+38|🎆|Červený ohňostroj|Soli stroncia dávají ohňostroji výraznou červenou barvu.|strontium
+39|📺|Televizní obrazovky|Sloučeniny yttria se používaly pro červenou barvu obrazovek starších televizorů.|yttrium
+40|💎|Kubická zirkonie|Kubická zirkonie je syntetický drahokam tvořený oxidem zirkoničitým.|zirconium
+41|🧲|Supravodivé magnety|Slitiny s niobem se používají v supravodivých magnetech.|niobium
+42|🛠️|Odolné nástroje|Slitiny s molybdenem se používají například ve vrtácích a pilách.|molybdenum
+43|🩻|Lékařské zobrazení|Technecium-99m se používá při diagnostickém zobrazování orgánů.|technetium
+44|🔌|Elektrické kontakty|Ruthenium se využívá v odolných elektrických kontaktech.|ruthenium
+45|🌹|Růže|Název rhodia pochází z řeckého slova pro růži a odkazuje na barvu jeho solí.|rhodium
+46|☄️|Planetka Pallas|Palladium bylo pojmenováno podle planetky Pallas.|palladium
+47|🪞|Zrcadla|Stříbro velmi dobře odráží světlo a používá se při výrobě zrcadel.|silver
+48|🔋|Akumulátory Ni-Cd|Kadmium se používá v nikl-kadmiových akumulátorech.|cadmium
+49|📱|Dotykové displeje|Oxid india a cínu tvoří průhlednou vodivou vrstvu dotykových displejů.|indium
+50|🥫|Pocínované konzervy|Ocelové konzervy mohou mít ochranný povlak z cínu.|tin
+51|🧯|Zpomalení hoření|Sloučeniny antimonu se používají v materiálech zpomalujících hoření.|antimony
+52|🌍|Země|Tellur dostal název podle latinského tellus, tedy Země.|tellurium
+53|🌊|Mořské řasy|Mnohé mořské řasy obsahují jod, který z nich byl historicky získáván.|iodine
+54|📸|Fotoblesk|Xenon se používá ve výbojkách fotografických blesků.|xenon
+55|⏱️|Atomové hodiny|Cesium se používá v přesných atomových hodinách.|caesium
+56|🩻|Rentgenový kontrast|Síran barnatý se používá jako kontrastní látka při rentgenovém vyšetření.|barium
+72|🏙️|Kodaň|Hafnium dostalo název podle latinského názvu Kodaně, Hafnia.|hafnium
+73|📱|Kondenzátory|Tantal se používá v malých kondenzátorech přenosné elektroniky.|tantalum
+74|💡|Žárovkové vlákno|Wolfram se používal ve vláknech klasických žárovek.|tungsten
+75|✈️|Turbínové lopatky|Rhenium se přidává do slitin pro lopatky turbín.|rhenium
+76|⚖️|Velká hustota|Osmium patří k nejhustším prvkům.|osmium
+77|🌈|Duha|Název iridia odkazuje na duhu a výrazné barvy jeho solí.|iridium
+78|💍|Šperky|Platina je odolný drahý kov používaný ve šperkařství.|platinum
+79|👑|Zlaté šperky|Zlato se používá ve špercích jako čistý kov i ve slitinách.|gold
+80|🌡️|Staré teploměry|Kapalná rtuť se dříve běžně používala v teploměrech.|mercury
+81|🌱|Zelená ratolest|Název thallia pochází z řeckého slova pro zelený výhonek.|thallium
+82|🔋|Autobaterie|Olovo se používá v olověných akumulátorech automobilů.|lead
+83|💄|Perleťová kosmetika|Oxychlorid bismutitý dává některým kosmetickým přípravkům perleťový vzhled.|bismuth
+84|🇵🇱|Polsko|Marie Curie pojmenovala polonium podle své rodné země, Polska.|polonium
+85|⏳|Nestálost|Astat je nestálý radioaktivní prvek; název vychází z řeckého astatos.|astatine
+86|🏠|Podloží domů|Radon se může z podloží uvolňovat do budov.|radon
+87|🇫🇷|Francie|Francium bylo pojmenováno podle Francie.|francium
+88|☢️|Radioaktivita|Radium je silně radioaktivní prvek.|radium
+`;
+const hints = Object.fromEntries(hintRows.trim().split('\n').map(row => {
+  const [number, icon, caption, explanation, slug] = row.split('|');
+  return [number, { icon, caption, explanation, source: `https://periodic-table.rsc.org/element/${number}/${slug}` }];
+}));
+
 export const elements = rows.trim().split('\n').map(row => {
   const [n, symbol, cs, la, category, common] = row.split('|');
-  return { number: Number(n), symbol, cs, la, category, common: common === '1', aliases: variants[n] || {} };
+  return { number: Number(n), symbol, cs, la, category, common: common === '1', aliases: variants[n] || {}, hint: hints[n] };
 });
 
 export const categories = {

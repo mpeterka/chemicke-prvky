@@ -85,3 +85,14 @@ test('catalog searches by Czech without accents, Latin and symbols', () => {
   assert.deepEqual(matchingElements(pool, 'Fe').map(e => e.number), [26]);
   assert.equal(matchingElements(pool, 'nenalezeno').length, 0);
 });
+
+test('each included element has an explained visual memory aid and a source', () => {
+  for (const element of elements) {
+    assert.ok(element.hint?.icon, `Missing picture for ${element.symbol}`);
+    assert.ok(element.hint?.caption, `Missing caption for ${element.symbol}`);
+    assert.ok(element.hint?.explanation, `Missing explanation for ${element.symbol}`);
+    assert.match(element.hint.source, /^https:\/\/periodic-table\.rsc\.org\/element\//);
+  }
+  assert.equal(elements.find(e => e.symbol === 'Se').hint.icon, '🌙');
+  assert.equal(elements.find(e => e.symbol === 'He').hint.icon, '🎈');
+});

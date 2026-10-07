@@ -40,6 +40,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
       for (let i = 0; i < 10; i++) {
         await page.locator('.question-cell').waitFor();
         const e = await questionElement(page);
+        assert.equal(await page.locator('.question-cell .cell-picture').count(), 1, 'Question should show a visual mnemonic');
         // Only atomic number, category and the single prompt may be shown before checking.
         assert.equal(await page.locator('.question-cell .cell-symbol').count(), i % 3 === 2 ? 1 : 0);
         await layout(page);
@@ -80,11 +81,19 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
       assert.equal(await page.locator('.answer-option').count(), 8, 'Retry still has four options per field');
       await page.getByRole('button', { name: 'Přehled prvků', exact: true }).tap();
       assert.equal(await page.locator('.catalog-grid article').count(), 73);
+      assert.equal(await page.locator('.catalog-grid .cell-picture').count(), 73);
       await layout(page);
       await page.screenshot({ path: `.qa/${name}-catalog.png`, fullPage: true });
       await page.getByRole('searchbox').fill('med');
       assert.equal(await page.locator('.catalog-grid article').count(), 1);
       assert.equal(await page.locator('.catalog-grid .cell-symbol').innerText(), 'Cu');
+      for (const [query, icon, explanation] of [['selen', '🌙', 'Seléné'], ['helium', '🎈', 'balónků']]) {
+        await page.getByRole('searchbox').fill(query);
+        assert.equal(await page.locator('.catalog-grid .cell-picture').innerText(), icon);
+        await page.locator('.cell-story summary').tap();
+        assert.ok((await page.locator('.cell-story p').innerText()).includes(explanation));
+        await layout(page);
+      }
       await page.getByRole('searchbox').fill('<img src=x onerror=alert(1)>');
       assert.equal(await page.locator('.catalog-grid article').count(), 0);
       await page.reload();
