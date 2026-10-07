@@ -41,6 +41,7 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         await page.locator('.question-cell').waitFor();
         const e = await questionElement(page);
         assert.equal(await page.locator('.question-cell .cell-picture').count(), 1, 'Question should show a visual mnemonic');
+        assert.equal(await page.locator('.question-cell details').count(), 0, 'Explanation must not reveal the answer before checking');
         // Only atomic number, category and the single prompt may be shown before checking.
         assert.equal(await page.locator('.question-cell .cell-symbol').count(), i % 3 === 2 ? 1 : 0);
         await layout(page);
@@ -64,6 +65,10 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
           await page.getByRole('button', { name: 'Zkontrolovat', exact: true }).tap();
         }
         await page.locator('.feedback').waitFor();
+        assert.notEqual(await page.locator('.question-cell details').getAttribute('open'), null, 'Explanation should open after every answer');
+        assert.ok(await page.locator('.question-cell .name-origin').isVisible());
+        assert.ok((await page.locator('.question-cell .name-origin').innerText()).includes(e.origin.text));
+        await layout(page);
         assert.equal(await page.locator('.feedback').innerText().then(t => t.includes('Správná trojice!')), i !== 0);
         const portrait = page.locator('.feedback img');
         assert.equal(await portrait.count(), 1, 'Feedback should include the photo portrait');
@@ -91,7 +96,8 @@ for (const [engine, type] of [['chromium', chromium], ['webkit', webkit]]) {
         await page.getByRole('searchbox').fill(query);
         assert.equal(await page.locator('.catalog-grid .cell-picture').innerText(), icon);
         await page.locator('.cell-story summary').tap();
-        assert.ok((await page.locator('.cell-story p').innerText()).includes(explanation));
+        assert.ok((await page.locator('.picture-explanation').innerText()).includes(explanation));
+        assert.ok(await page.locator('.name-origin').isVisible());
         await layout(page);
       }
       await page.getByRole('searchbox').fill('<img src=x onerror=alert(1)>');

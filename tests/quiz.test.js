@@ -91,6 +91,8 @@ test('each included element has an explained visual memory aid and a source', ()
     assert.ok(element.hint?.icon, `Missing picture for ${element.symbol}`);
     assert.ok(element.hint?.caption, `Missing caption for ${element.symbol}`);
     assert.ok(element.hint?.explanation, `Missing explanation for ${element.symbol}`);
+    assert.ok(element.origin?.text, `Missing name origin for ${element.symbol}`);
+    assert.match(element.origin.source, /^https:\/\//);
     assert.match(element.hint.source, /^https:\/\/periodic-table\.rsc\.org\/element\//);
   }
   assert.equal(elements.find(e => e.symbol === 'Se').hint.icon, '🌙');

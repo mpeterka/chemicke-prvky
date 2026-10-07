@@ -171,9 +171,93 @@ const hints = Object.fromEntries(hintRows.trim().split('\n').map(row => {
   return [number, { icon, caption, explanation, source: `https://periodic-table.rsc.org/element/${number}/${slug}` }];
 }));
 
+// Paraphrased name origins: RSC; historic Latin names additionally use MUNI.
+const originRows = `
+1|Hydrogenium vychází z řeckých slov pro vodu a tvoření: „tvořící vodu“. Také český vodík odkazuje na vodu.
+2|Z řeckého helios, Slunce. Helium bylo nejprve rozpoznáno ve spektru Slunce.
+3|Z řeckého lithos, kámen; lithium bylo objeveno v minerálu.
+4|Podle minerálu berylu, řecky beryllos.
+5|Podle boraxu; jeho pojmenování se odvozuje od arabského buraq.
+6|Carboneum souvisí s latinským carbo, uhlí. Na uhlí odkazuje i český název uhlík.
+7|Nitrogenium vychází z řeckého nitron a genes: „tvořící ledek“. Český název dusík připomíná, že tento plyn nepodporuje dýchání.
+8|Oxygenium znamená podle řeckých kořenů „tvořící kyseliny“. Z této historické představy vychází i český kyslík; dnes víme, že kyslík není součástí všech kyselin.
+9|Z latinského fluere, téci. Souvisí s kazivcem, používaným jako tavidlo.
+10|Z řeckého neos, nový.
+11|Český sodík odkazuje na sodu. Latinské natrium je historický název prvku; z něj pochází značka Na.
+12|Magnesium je pojmenováno podle Magnesie, oblasti v řecké Thesálii.
+13|Aluminium vychází z latinského alumen, kamenec.
+14|Silicium vychází z latinského silex (silicis), pazourek.
+15|Z řeckého phosphoros, světlonoš neboli nositel světla.
+16|Sulfur je starý latinský název síry. Jeho vzdálenější původ není jednoznačný.
+17|Z řeckého chloros, žlutozelený, podle barvy plynu.
+18|Z řeckého argos, nečinný, podle malé chemické reaktivity.
+19|Kalium je historický název, ze kterého vznikla značka K. Anglické potassium odkazuje na potaš, získávanou z popela.
+20|Calcium vychází z latinského calx, vápno; na vápno odkazuje také český vápník.
+21|Podle Scandie, latinského pojmenování Skandinávie.
+22|Podle Titánů z řecké mytologie.
+23|Podle Vanadis, jména severské bohyně Freyji.
+24|Z řeckého chroma, barva, podle barevných sloučenin chromu.
+25|Původ není zcela jednoznačný: název se spojuje s latinským magnes (magnet) nebo s historickým označením magnesia nigra.
+26|Ferrum je starý latinský název železa; z něj pochází značka Fe.
+27|Z německého Kobold, skřítek. Horníci tak označovali některé problematické rudy.
+28|Zkrácením německého kupfernickel, přibližně „ďáblova měď“, starého názvu niklové rudy.
+29|Cuprum vzniklo z latinského aes cyprium, kyperský kov, podle ostrova Kypr.
+30|Z německého označení Zink. Jeho vzdálenější původ je nejistý.
+31|Podle Gallie, latinského názvu Francie.
+32|Podle Germanie, latinského názvu Německa.
+33|Název se spojuje s řeckým arsenikon, označením žlutého minerálu auripigmentu.
+34|Podle Seléné, řecké bohyně Měsíce; řecké selene znamená Měsíc.
+35|Z řeckého bromos, zápach, podle pronikavého pachu bromu.
+36|Z řeckého kryptos, skrytý.
+37|Z latinského rubidus, temně červený, podle červených čar ve spektru.
+38|Podle skotské obce Strontian, kde byl nalezen minerál obsahující stroncium.
+39|Podle švédské obce Ytterby, známé nalezištěm minerálů vzácných prvků.
+40|Z perského zargun, zlatě zbarvený, přes název minerálu zirkonu.
+41|Podle Niobé, dcery Tantala z řecké mytologie. Název připomíná chemickou podobnost niobu a tantalu.
+42|Z řeckého molybdos, olovo; jeho minerály bývaly zaměňovány s olověnými rudami.
+43|Z řeckého tekhnetos, umělý, protože prvek byl poprvé připraven uměle.
+44|Podle Ruthenie, historického latinského pojmenování Ruska.
+45|Z řeckého rhodon, růže, podle růžově zbarvených solí.
+46|Podle planetky Pallas, pojmenované po řecké bohyni Pallas Athéně.
+47|Argentum je starý latinský název stříbra; z něj pochází značka Ag.
+48|Z latinského cadmia, historického názvu minerálu kalamínu.
+49|Podle indigové barvy čáry ve spektru, která vedla k objevu prvku.
+50|Stannum je starý latinský název cínu; z něj pochází značka Sn.
+51|Stibium je historické latinské označení, ze kterého pochází značka Sb. Výklad původu názvu antimon není jednoznačný.
+52|Z latinského tellus, Země.
+53|Z řeckého iodes, fialový, podle barvy par jodu.
+54|Z řeckého xenos, cizinec.
+55|Z latinského caesius, nebesky modrý, podle modrých čar ve spektru.
+56|Z řeckého barys, těžký.
+72|Podle Hafnie, latinského názvu Kodaně, kde byl prvek objeven.
+73|Podle Tantala, postavy řecké mytologie.
+74|Wolfram souvisí s německým označením „vlčí pěna“ pro minerál wolframit. Anglické tungsten pochází ze švédského tung sten, těžký kámen.
+75|Podle Rhenus, latinského názvu řeky Rýn.
+76|Z řeckého osme, vůně či pach, podle zápachu oxidu osmičelého.
+77|Podle Iris, řecké bohyně duhy, kvůli rozmanitým barvám sloučenin iridia.
+78|Ze španělského platina, zdrobněliny slova plata (stříbro): „malé stříbro“.
+79|Aurum je starý latinský název zlata; z něj pochází značka Au.
+80|Hydrargyrum vychází z řeckého hydrargyros, „vodní stříbro“, podle stříbřitého vzhledu a kapalného skupenství rtuti.
+81|Z řeckého thallos, zelený výhonek, podle zelené čáry ve spektru.
+82|Plumbum je starý latinský název olova; z něj pochází značka Pb.
+83|Přes německé označení Wismut. Jeho vzdálenější původ není jednoznačný.
+84|Podle Polska, rodné země Marie Curie.
+85|Z řeckého astatos, nestálý, podle radioaktivní nestability prvku.
+86|Název vychází z radia; radon byl objeven jako plyn vznikající při jeho radioaktivním rozpadu.
+87|Podle Francie, kde byl prvek objeven.
+88|Z latinského radius, paprsek, podle záření vydávaného prvkem.
+`;
+const latinSource = 'https://www.ped.muni.cz/wchem/sm/hc/so/soubory/pojmy/prvky.pdf';
+const latinOrigins = new Set([11, 19, 26, 47, 50, 51, 79, 82]);
+const origins = Object.fromEntries(originRows.trim().split('\n').map(row => {
+  const [number, text] = row.split('|');
+  const source = number === '80' ? 'https://www.loc.gov/everyday-mysteries/browse-all-questions/item/chemical-elements/' : number === '51' ? 'https://www.ped.muni.cz/wchem/sm/hc/hist/chemlat/antimon.html' : latinOrigins.has(Number(number)) ? latinSource : hints[number].source;
+  return [number, { text, source }];
+}));
+
 export const elements = rows.trim().split('\n').map(row => {
   const [n, symbol, cs, la, category, common] = row.split('|');
-  return { number: Number(n), symbol, cs, la, category, common: common === '1', aliases: variants[n] || {}, hint: hints[n] };
+  return { number: Number(n), symbol, cs, la, category, common: common === '1', aliases: variants[n] || {}, hint: hints[n], origin: origins[n] };
 });
 
 export const categories = {
